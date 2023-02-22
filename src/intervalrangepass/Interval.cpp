@@ -144,12 +144,29 @@ Interval interval::mul(Interval l, Interval r) {
 /* Division
  */
 Interval interval::div(Interval l, Interval r) {
-  return interval::full();
+    int y1 = lower(r);
+    int y2 = upper(r);
+
+    if(y1 < 0 && y2 > 0){
+        //TODO: what to do with two intervals
+        //TODO: hint in clion is not working
+        return interval::mul(l, make(minf, pinf));
+    }
+    else if(y1 == 0){
+        return interval::mul(l, make(1 / y2, pinf));
+    }
+    else if(y2 == 0){
+        return interval::mul(l, make(minf, 1 / y1));
+    }
+    else{
+        return interval::mul(l, make(1 / y2, 1 / y1));
+    }
 }
 
 /* Comparison Operators
  *   Trivial imprecise definitions
  */
+//TODO: comparsion for extra credit
 Interval interval::lt(Interval l, Interval r) { return unit(); }
 Interval interval::gt(Interval l, Interval r) { return unit(); }
 Interval interval::eq(Interval l, Interval r) { return unit(); }
