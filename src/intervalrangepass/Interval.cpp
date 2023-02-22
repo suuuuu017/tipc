@@ -93,8 +93,52 @@ Interval interval::sub(Interval l, Interval r) {
 
 /* Multiplication
  */
+
+int overflowHandler(int x, int y){
+    int r = x * y;
+    if (x > 0 && y > 0 && r / x != y){
+        return pinf;
+    }
+    else if (x > 0 && y < 0 && r / x != y){
+        return minf;
+    }
+    else if (x < 0 && y > 0 && r / x != y){
+        return minf;
+    }
+    else if (x < 0 && y < 0 && r / x != y){
+        return pinf;
+    }
+    else{
+        return r;
+    }
+}
+
 Interval interval::mul(Interval l, Interval r) {
-  return interval::full();
+    int low, up;
+
+    if (pinf == lower(l) || pinf == lower(r)) {
+        low = pinf; // one of the arguments is empty
+    } else if (minf == lower(l) || minf == lower(r)) {
+        low = minf;
+    } else {
+        low = std::min(overflowHandler(lower(l), lower(r)),
+                overflowHandler(lower(l), upper(r)),
+                overflowHandler(upper(l), lower(r)),
+                overlfowHandler(upper(l), upper(r)));
+    }
+
+    if (minf == upper(l) || minf == upper(r)) {
+        up = minf; // one of the arguments is empty
+    } else if (pinf == upper(l) || pinf == upper(r)) {
+        up = pinf;
+    } else {
+        up = std::max(overflowHandler(lower(l), lower(r)),
+                      overflowHandler(lower(l), upper(r)),
+                      overflowHandler(upper(l), lower(r)),
+                      overlfowHandler(upper(l), upper(r)));
+    }
+
+    return make(low, up);
 }
 
 /* Division
