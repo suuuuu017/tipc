@@ -2,6 +2,7 @@
 
 #include <limits>
 #include <string>
+#include <algorithm>
 
 /* Integer intervals 
  *   A simple interface using basic types that is optimized for clarity

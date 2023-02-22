@@ -121,10 +121,10 @@ Interval interval::mul(Interval l, Interval r) {
     } else if (minf == lower(l) || minf == lower(r)) {
         low = minf;
     } else {
-        low = std::min(overflowHandler(lower(l), lower(r)),
+        low = std::min({overflowHandler(lower(l), lower(r)),
                 overflowHandler(lower(l), upper(r)),
                 overflowHandler(upper(l), lower(r)),
-                overlfowHandler(upper(l), upper(r)));
+                overflowHandler(upper(l), upper(r))});
     }
 
     if (minf == upper(l) || minf == upper(r)) {
@@ -132,10 +132,10 @@ Interval interval::mul(Interval l, Interval r) {
     } else if (pinf == upper(l) || pinf == upper(r)) {
         up = pinf;
     } else {
-        up = std::max(overflowHandler(lower(l), lower(r)),
+        up = std::max({overflowHandler(lower(l), lower(r)),
                       overflowHandler(lower(l), upper(r)),
                       overflowHandler(upper(l), lower(r)),
-                      overlfowHandler(upper(l), upper(r)));
+                      overflowHandler(upper(l), upper(r))});
     }
 
     return make(low, up);
