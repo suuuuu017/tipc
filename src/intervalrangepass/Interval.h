@@ -3,6 +3,7 @@
 #include <limits>
 #include <string>
 #include <algorithm>
+#include <iostream>
 
 /* Integer intervals 
  *   A simple interface using basic types that is optimized for clarity

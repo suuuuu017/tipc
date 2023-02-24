@@ -8,7 +8,7 @@ Interval interval::make(int l, int r) { return std::make_pair(l,r); }
 int interval::lower(Interval i) { return i.first; }
 int interval::upper(Interval i) { return i.second; }
 
-// Pre-defined intervals 
+// Pre-defined intervals
 Interval interval::full() { return make(minf,pinf); }
 Interval interval::empty() { return make(pinf,minf); }
 Interval interval::unit() { return make(0,1); }
@@ -21,7 +21,7 @@ Interval interval::unit() { return make(0,1); }
 Interval interval::lub(Interval l, Interval r) {
   Interval result;
   if (l == full()) {
-    result = full(); 
+    result = full();
   } else if (l == empty()) {
     result = r;
   } else if (lower(l) == minf && upper(r) == pinf) {
@@ -37,7 +37,7 @@ Interval interval::lub(Interval l, Interval r) {
 }
 
 /* Unary negation
- *  Numerous special cases where the extreme bounds are involved. 
+ *  Numerous special cases where the extreme bounds are involved.
  *  General case is to negate the bounds and use min/max to establish bounds.
  */
 Interval interval::neg(Interval i) {
@@ -55,7 +55,7 @@ Interval interval::neg(Interval i) {
   } else if (minf == lower(i)) {
     result = make(-(upper(i)), pinf);
   } else {
-    result = make(std::min(-(upper(i)),-(lower(i))), 
+    result = make(std::min(-(upper(i)),-(lower(i))),
                   std::max(-(upper(i)),-(lower(i))));
   }
   return result;
@@ -71,18 +71,18 @@ Interval interval::add(Interval l, Interval r) {
   if (pinf == lower(l) || pinf == lower(r)) {
     low = pinf; // one of the arguments is empty
   } else if (minf == lower(l) || minf == lower(r)) {
-    low = minf; 
-  } else { 
-    low = lower(l) + lower(r); 
-  } 
+    low = minf;
+  } else {
+    low = lower(l) + lower(r);
+  }
 
   if (minf == upper(l) || minf == upper(r)) {
     up = minf; // one of the arguments is empty
   } else if (pinf == upper(l) || pinf == upper(r)) {
-    up = pinf; 
-  } else { 
-    up = upper(l) + upper(r); 
-  } 
+    up = pinf;
+  } else {
+    up = upper(l) + upper(r);
+  }
 
   return make(low, up);
 }
@@ -94,8 +94,8 @@ Interval interval::sub(Interval l, Interval r) {
 /* Multiplication
  */
 
-int overflowHandler(int x, int y){
-    int r = x * y;
+int overflowHandler(double x, double y){
+    double r = x * y;
     if (x > 0 && y > 0 && r / x != y){
         return pinf;
     }
@@ -109,7 +109,7 @@ int overflowHandler(int x, int y){
         return pinf;
     }
     else{
-        return r;
+        return (int)r;
     }
 }
 
@@ -125,6 +125,7 @@ Interval interval::mul(Interval l, Interval r) {
                 overflowHandler(lower(l), upper(r)),
                 overflowHandler(upper(l), lower(r)),
                 overflowHandler(upper(l), upper(r))});
+        std::cerr << "low is " << low << std::endl;
     }
 
     if (minf == upper(l) || minf == upper(r)) {
@@ -141,6 +142,25 @@ Interval interval::mul(Interval l, Interval r) {
     return make(low, up);
 }
 
+Interval multiHelper(Interval l, std::pair<double, double> r) {
+    int low, up;
+    double rl = r.first;
+    double rr = r.second;
+
+    low = std::min({overflowHandler(lower(l), rl),
+                    overflowHandler(lower(l), rr),
+                    overflowHandler(upper(l), rl),
+                    overflowHandler(upper(l), rr)});
+
+    up = std::max({overflowHandler(lower(l), rl),
+                   overflowHandler(lower(l), rr),
+                   overflowHandler(upper(l), rl),
+                   overflowHandler(upper(l), rr)});
+
+
+    return make(low, up);
+}
+
 /* Division
  */
 Interval interval::div(Interval l, Interval r) {
@@ -150,16 +170,16 @@ Interval interval::div(Interval l, Interval r) {
     if(y1 < 0 && y2 > 0){
         //TODO: what to do with two intervals
         //TODO: hint in clion is not working
-        return interval::mul(l, make(minf, pinf));
+        return multiHelper(l, std::make_pair(minf, pinf));
     }
     else if(y1 == 0){
-        return interval::mul(l, make(1 / y2, pinf));
+        return multiHelper(l, std::make_pair(1.0 / y2, pinf));
     }
     else if(y2 == 0){
-        return interval::mul(l, make(minf, 1 / y1));
+        return multiHelper(l, std::make_pair(minf, 1.0 / y1));
     }
     else{
-        return interval::mul(l, make(1 / y2, 1 / y1));
+        return multiHelper(l, std::make_pair(1.0 / y2, 1.0 / y1));
     }
 }
 
@@ -177,7 +197,7 @@ std::string istr(int b) {
   if (b == minf) {
     result = "-inf";
   } else if (b == pinf) {
-    result = "+inf"; 
+    result = "+inf";
   } else {
     result = std::to_string(b);
   }
