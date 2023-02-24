@@ -71,9 +71,18 @@ Interval interval::add(Interval l, Interval r) {
   if (pinf == lower(l) || pinf == lower(r)) {
     low = pinf; // one of the arguments is empty
   } else if (minf == lower(l) || minf == lower(r)) {
-    low = minf;
+      low = minf;
   } else {
-    low = lower(l) + lower(r);
+      //TODO: add overflow
+    if(lower(l) > 0 && lower(r) > 0 && lower(r) > pinf - lower(l)){
+        low = pinf;
+    }
+    else if(lower(l) < 0 && lower(r) < 0 && lower(r) < minf - lower(l)){
+        low = minf;
+    }
+    else{
+        low = lower(l) + lower(r);
+    }
   }
 
   if (minf == upper(l) || minf == upper(r)) {
@@ -81,7 +90,15 @@ Interval interval::add(Interval l, Interval r) {
   } else if (pinf == upper(l) || pinf == upper(r)) {
     up = pinf;
   } else {
-    up = upper(l) + upper(r);
+      if(upper(l) > 0 && upper(r) > 0 && upper(r) > pinf - upper(l)){
+          up =  pinf;
+      }
+      else if(upper(l) < 0 && upper(r) < 0 && upper(r) < minf - upper(l)){
+          up = minf;
+      }
+      else{
+          up = upper(l) + upper(r);
+      }
   }
 
   return make(low, up);
