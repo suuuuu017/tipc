@@ -113,16 +113,18 @@ Interval interval::sub(Interval l, Interval r) {
 
 int overflowHandler(double x, double y){
     double r = x * y;
-    if (x > 0 && y > 0 && r / x != y){
+    if (x > 0 && y > 0 && x > pinf / y){
         return pinf;
     }
-    else if (x > 0 && y < 0 && r / x != y){
+    else if (x > 0 && y < 0 && x < minf / y){
+        std::cerr << "smth" << std::endl;
         return minf;
     }
-    else if (x < 0 && y > 0 && r / x != y){
+    else if (x < 0 && y > 0 && x < minf / y){
+        std::cerr << "smth2" << std::endl;
         return minf;
     }
-    else if (x < 0 && y < 0 && r / x != y){
+    else if (x < 0 && y < 0 && x > pinf / y){
         return pinf;
     }
     else{
@@ -138,6 +140,7 @@ Interval interval::mul(Interval l, Interval r) {
     } else if (minf == lower(l) || minf == lower(r)) {
         low = minf;
     } else {
+
         low = std::min({overflowHandler(lower(l), lower(r)),
                 overflowHandler(lower(l), upper(r)),
                 overflowHandler(upper(l), lower(r)),

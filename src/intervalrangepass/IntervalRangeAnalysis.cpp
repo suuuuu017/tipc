@@ -58,6 +58,8 @@ getInterval(Value *V, StateMap state) {
   return result;
 }
 
+std::set<int> B;
+
 // For an analysis pass, runOnFunction should perform the actual analysis and
 // compute the results. The actual output, however, is produced separately.
 bool
@@ -83,8 +85,25 @@ IntervalRangeAnalysis::runOnFunction(Function& F) {
     }
     errs() << "DEBUG: initial worklist\n";
     for (Instruction* i : w) {
-      errs() << "-->" << *i << "\n";
+        for (auto operand = i->operands().begin();
+             operand != i->operands().end(); ++operand) {
+//            errs() << "-->" << *operand->get() << "\n";
+            if (ConstantInt* ci = dyn_cast<ConstantInt>(operand->get())) {
+                int result = ci->getSExtValue();
+                errs() << "-->" << result << "\n";
+                B.insert(result);
+            }
+
+//            errs() << "-->" << *i->getOperand(0) << "\n";
+        }
     }
+//    errs() << "stuff in B";
+      std::set<int>::iterator it;
+      B.insert(minf);
+      B.insert(pinf);
+      for (it = B.begin(); it != B.end(); it++) {
+          errs() << *it << ' ';
+      }
   }
 
   // Iterate until the worklist is empty
@@ -172,11 +191,28 @@ IntervalRangeAnalysis::runOnFunction(Function& F) {
     if (IntervalRangeDebug) {
       errs() << "DEBUG: analyzing " << *i << "\n";
       errs() << "--> old value = " << str(old) << "\n";
-      errs() << "--> new value  =" << str(current) << "\n";
+      errs() << "--> new value  =" << current.first << " " << current.second << "\n";
     }
 
     // add users of this instruction to worklist only if the value has changed
     if (old != current) {
+        auto nl = B.lower_bound(current.first);
+//        if (nl != B.begin()){
+        if(int(*nl) != int(current.first)){
+            current.first = *(--nl);
+        }
+        else{
+            current.first = *nl;
+        }
+//        }
+//        else{
+//            current.first = minf;
+//        }
+        auto nr = B.lower_bound(current.second);
+        current.second = *nr;
+
+
+        errs() << "widening" << current.first << " " << current.second << "\n";
       state[i] = current;
       for(User *u : i->users()) { 
         if (Instruction* cu = dyn_cast<Instruction>(u)){
