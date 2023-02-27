@@ -1,0 +1,10 @@
+main() {
+  var x, y, z;
+  x = 238497894;		// x = [10,10]
+  y = -238497894;
+  while (x > 0) {
+    x = x * 10;          //
+    y = y - x;
+  }
+  return x + y;		// [-minf,pinf]
+}

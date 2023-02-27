@@ -11,10 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c02d0f9c-b7a6-48a8-97cf-ea75fc5ff686" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/1.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/intervalrangepass/Interval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/Interval.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/intervalrangepass/Interval.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/Interval.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/intervalrangepass/IntervalRangeAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/IntervalRangeAnalysis.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/intervalrangepass/test/runirpass.sh" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/test/runirpass.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +51,7 @@
       <updated>1677088370702</updated>
       <workItem from="1677088379413" duration="4537000" />
       <workItem from="1677101786131" duration="213000" />
-      <workItem from="1677102036560" duration="30175000" />
+      <workItem from="1677102036560" duration="32017000" />
     </task>
     <servers />
   </component>
