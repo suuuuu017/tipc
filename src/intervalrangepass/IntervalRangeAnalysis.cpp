@@ -198,17 +198,17 @@ IntervalRangeAnalysis::runOnFunction(Function& F) {
     if (old != current) {
         // TODO: check minf
         auto nl = B.lower_bound(current.first);
-//        if (nl != B.begin()){
+        if (nl != B.begin()){
             if(int(*nl) != int(current.first)){
                 current.first = *(--nl);
             }
             else{
                 current.first = *nl;
             }
-//        }
-//        else{
-//            current.first = minf;
-//        }
+        }
+        else{
+            current.first = minf;
+        }
         auto nr = B.lower_bound(current.second);
         current.second = *nr;
 
