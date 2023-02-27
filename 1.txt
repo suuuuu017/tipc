@@ -5,6 +5,8 @@ entry:
 header1:                                          ; preds = %body1, %entry
   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
+  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
   %gttmp = icmp sgt i64 %x.0, 0
   %loopcond = icmp ne i1 %gttmp, false
   br i1 %loopcond, label %body1, label %exit1
@@ -12,97 +14,141 @@ header1:                                          ; preds = %body1, %entry
 body1:                                            ; preds = %header1
   %subtmp = sub i64 %x.0, 1
   %multmp = mul i64 %y.0, 2
+  %addtmp = add i64 %z.0, 1
+  %divtmp = sdiv i64 %subtmp, 5
   br label %header1
 
 exit1:                                            ; preds = %header1
   call void @llvm.donothing()
-  %addtmp = add i64 %x.0, %y.0
-  ret i64 %addtmp
+  %addtmp8 = add i64 %x.0, %y.0
+  %addtmp10 = add i64 %addtmp8, %z.0
+  %addtmp12 = add i64 %addtmp10, %t.0
+  ret i64 %addtmp12
 }
 
--->  %addtmp = add i64 %x.0, %y.0 = [+inf,-inf]
--->  call void @llvm.donothing() = [+inf,-inf]
--->  %gttmp = icmp sgt i64 %x.0, 0 = [+inf,-inf]
--->  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ] = [+inf,-inf]
--->  %loopcond = icmp ne i1 %gttmp, false = [+inf,-inf]
--->  %subtmp = sub i64 %x.0, 1 = [+inf,-inf]
+-->  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ] = [+inf,-inf]
 -->  %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ] = [+inf,-inf]
+-->  %divtmp = sdiv i64 %subtmp, 5 = [+inf,-inf]
+-->  %gttmp = icmp sgt i64 %x.0, 0 = [+inf,-inf]
+-->  %loopcond = icmp ne i1 %gttmp, false = [+inf,-inf]
+-->  %addtmp8 = add i64 %x.0, %y.0 = [+inf,-inf]
+-->  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ] = [+inf,-inf]
+-->  %subtmp = sub i64 %x.0, 1 = [+inf,-inf]
+-->  %addtmp10 = add i64 %addtmp8, %z.0 = [+inf,-inf]
 -->  %multmp = mul i64 %y.0, 2 = [+inf,-inf]
+-->  %addtmp12 = add i64 %addtmp10, %t.0 = [+inf,-inf]
+-->  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ] = [+inf,-inf]
+-->  %addtmp = add i64 %z.0, 1 = [+inf,-inf]
+-->  call void @llvm.donothing() = [+inf,-inf]
 DEBUG: initial worklist
 -->10
 -->1
 -->0
 -->0
+-->0
+-->0
 -->1
 -->2
--2147483648 0 1 2 10 2147483647 DEBUG: merging values at node 0x600001d26178
+-->1
+-->5
+-2147483648 0 1 2 5 10 2147483647 DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
 --> phi[1] with lub([10,10], [+inf,-inf]) = [10,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [+inf,-inf]
 --> new value  =10 10
-widening10 10
-DEBUG: merging values at node 0x600001d260d8
+DEBUG: merging values at node 0x6000028c6bc8
 --> phi[0] with lub([+inf,-inf], [1,1]) = [1,1]
 --> phi[1] with lub([1,1], [+inf,-inf]) = [1,1]
 DEBUG: analyzing   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
 --> old value = [+inf,-inf]
 --> new value  =1 1
-widening1 1
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [+inf,-inf]) = [0,0]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [+inf,-inf]
+--> new value  =0 0
+DEBUG: merging values at node 0x6000028c6a88
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [+inf,-inf]) = [0,0]
+DEBUG: analyzing   %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+--> old value = [+inf,-inf]
+--> new value  =0 0
 DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
 --> old value = [+inf,-inf]
 --> new value  =0 1
-widening0 1
 DEBUG: analyzing   %loopcond = icmp ne i1 %gttmp, false
 --> old value = [+inf,-inf]
 --> new value  =0 1
-widening0 1
 DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
 --> old value = [+inf,-inf]
 --> new value  =9 9
-widening2 10
 DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 low is 2
 DEBUG: analyzing   %multmp = mul i64 %y.0, 2
 --> old value = [+inf,-inf]
 --> new value  =2 2
-widening2 2
 DEBUG: adding to worklist :  %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [+inf,-inf]
+--> new value  =1 1
+DEBUG: adding to worklist :  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [+inf,-inf]
+--> new value  =1 2
+DEBUG: adding to worklist :  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
 DEBUG: analyzing   call void @llvm.donothing()
 --> old value = [+inf,-inf]
 --> new value  =-2147483648 2147483647
-widening-2147483648 2147483647
-DEBUG: analyzing   %addtmp = add i64 %x.0, %y.0
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
 --> old value = [+inf,-inf]
 --> new value  =11 11
-widening10 2147483647
-DEBUG: merging values at node 0x600001d26178
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [+inf,-inf]
+--> new value  =10 2147483647
+DEBUG: analyzing   %addtmp12 = add i64 %addtmp10, %t.0
+--> old value = [+inf,-inf]
+--> new value  =10 2147483647
+DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
---> phi[1] with lub([10,10], [2,10]) = [2,10]
+--> phi[1] with lub([10,10], [5,10]) = [5,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [10,10]
---> new value  =2 10
-widening2 10
-DEBUG: adding to worklist :  %addtmp = add i64 %x.0, %y.0
+--> new value  =5 10
+DEBUG: adding to worklist :  %addtmp8 = add i64 %x.0, %y.0
 DEBUG: adding to worklist :  %subtmp = sub i64 %x.0, 1
 DEBUG: adding to worklist :  %gttmp = icmp sgt i64 %x.0, 0
-DEBUG: merging values at node 0x600001d260d8
+DEBUG: merging values at node 0x6000028c6bc8
 --> phi[0] with lub([+inf,-inf], [1,1]) = [1,1]
 --> phi[1] with lub([1,1], [2,2]) = [1,2]
 DEBUG: analyzing   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
 --> old value = [1,1]
 --> new value  =1 2
-widening1 2
 DEBUG: adding to worklist :  %multmp = mul i64 %y.0, 2
-DEBUG: analyzing   %addtmp = add i64 %x.0, %y.0
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,1]) = [0,1]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [0,0]
+--> new value  =0 1
+DEBUG: adding to worklist :  %addtmp10 = add i64 %addtmp8, %z.0
+DEBUG: adding to worklist :  %addtmp = add i64 %z.0, 1
+DEBUG: merging values at node 0x6000028c6a88
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,2]) = [0,2]
+DEBUG: analyzing   %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+--> old value = [0,0]
+--> new value  =0 2
+DEBUG: adding to worklist :  %addtmp12 = add i64 %addtmp10, %t.0
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
 --> old value = [10,+inf]
---> new value  =3 12
-widening2 2147483647
+--> new value  =6 12
 DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
---> old value = [2,10]
---> new value  =1 9
-widening1 10
+--> old value = [5,10]
+--> new value  =4 9
 DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+DEBUG: adding to worklist :  %divtmp = sdiv i64 %subtmp, 5
 DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
 --> old value = [0,1]
 --> new value  =0 1
@@ -110,35 +156,113 @@ low is 2
 DEBUG: analyzing   %multmp = mul i64 %y.0, 2
 --> old value = [2,2]
 --> new value  =2 4
-widening2 10
 DEBUG: adding to worklist :  %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
-DEBUG: merging values at node 0x600001d26178
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [10,+inf]
+--> new value  =5 2147483647
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [1,1]
+--> new value  =1 2
+DEBUG: adding to worklist :  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+DEBUG: analyzing   %addtmp12 = add i64 %addtmp10, %t.0
+--> old value = [10,+inf]
+--> new value  =5 2147483647
+DEBUG: merging values at node 0x6000028c6c68
+--> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
+--> phi[1] with lub([10,10], [2,10]) = [2,10]
+DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+--> old value = [5,10]
+--> new value  =2 10
+DEBUG: adding to worklist :  %addtmp8 = add i64 %x.0, %y.0
+DEBUG: adding to worklist :  %subtmp = sub i64 %x.0, 1
+DEBUG: adding to worklist :  %gttmp = icmp sgt i64 %x.0, 0
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [1,2]
+--> new value  =0 2
+DEBUG: adding to worklist :  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+DEBUG: merging values at node 0x6000028c6bc8
+--> phi[0] with lub([+inf,-inf], [1,1]) = [1,1]
+--> phi[1] with lub([1,1], [2,5]) = [1,5]
+DEBUG: analyzing   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
+--> old value = [1,2]
+--> new value  =1 5
+DEBUG: adding to worklist :  %multmp = mul i64 %y.0, 2
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,2]) = [0,2]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [0,1]
+--> new value  =0 2
+DEBUG: adding to worklist :  %addtmp10 = add i64 %addtmp8, %z.0
+DEBUG: adding to worklist :  %addtmp = add i64 %z.0, 1
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
+--> old value = [5,+inf]
+--> new value  =3 15
+DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
+--> old value = [2,10]
+--> new value  =1 9
+DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+DEBUG: adding to worklist :  %divtmp = sdiv i64 %subtmp, 5
+DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
+--> old value = [0,1]
+--> new value  =0 1
+DEBUG: merging values at node 0x6000028c6a88
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [0,2]) = [0,2]
+DEBUG: analyzing   %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+--> old value = [0,2]
+--> new value  =0 2
+low is 2
+DEBUG: analyzing   %multmp = mul i64 %y.0, 2
+--> old value = [2,5]
+--> new value  =2 10
+DEBUG: adding to worklist :  %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [5,+inf]
+--> new value  =2 2147483647
+DEBUG: adding to worklist :  %addtmp12 = add i64 %addtmp10, %t.0
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [1,2]
+--> new value  =1 3
+DEBUG: adding to worklist :  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
 --> phi[1] with lub([10,10], [1,10]) = [1,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [2,10]
 --> new value  =1 10
-widening1 10
-DEBUG: adding to worklist :  %addtmp = add i64 %x.0, %y.0
+DEBUG: adding to worklist :  %addtmp8 = add i64 %x.0, %y.0
 DEBUG: adding to worklist :  %subtmp = sub i64 %x.0, 1
 DEBUG: adding to worklist :  %gttmp = icmp sgt i64 %x.0, 0
-DEBUG: merging values at node 0x600001d260d8
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [0,2]
+--> new value  =0 2
+DEBUG: merging values at node 0x6000028c6bc8
 --> phi[0] with lub([+inf,-inf], [1,1]) = [1,1]
 --> phi[1] with lub([1,1], [2,10]) = [1,10]
 DEBUG: analyzing   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
---> old value = [1,2]
+--> old value = [1,5]
 --> new value  =1 10
-widening1 10
 DEBUG: adding to worklist :  %multmp = mul i64 %y.0, 2
-DEBUG: analyzing   %addtmp = add i64 %x.0, %y.0
+DEBUG: analyzing   %addtmp12 = add i64 %addtmp10, %t.0
+--> old value = [5,+inf]
+--> new value  =2 2147483647
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,5]) = [0,5]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [0,2]
+--> new value  =0 5
+DEBUG: adding to worklist :  %addtmp10 = add i64 %addtmp8, %z.0
+DEBUG: adding to worklist :  %addtmp = add i64 %z.0, 1
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
 --> old value = [2,+inf]
 --> new value  =2 20
-widening2 2147483647
 DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
 --> old value = [1,10]
 --> new value  =0 9
-widening0 10
 DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+DEBUG: adding to worklist :  %divtmp = sdiv i64 %subtmp, 5
 DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
 --> old value = [0,1]
 --> new value  =0 1
@@ -146,35 +270,49 @@ low is 2
 DEBUG: analyzing   %multmp = mul i64 %y.0, 2
 --> old value = [2,10]
 --> new value  =2 20
-widening2 2147483647
 DEBUG: adding to worklist :  %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
-DEBUG: merging values at node 0x600001d26178
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [2,+inf]
+--> new value  =2 2147483647
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [1,5]
+--> new value  =1 6
+DEBUG: adding to worklist :  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
 --> phi[1] with lub([10,10], [0,10]) = [0,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [1,10]
 --> new value  =0 10
-widening0 10
-DEBUG: adding to worklist :  %addtmp = add i64 %x.0, %y.0
+DEBUG: adding to worklist :  %addtmp8 = add i64 %x.0, %y.0
 DEBUG: adding to worklist :  %subtmp = sub i64 %x.0, 1
 DEBUG: adding to worklist :  %gttmp = icmp sgt i64 %x.0, 0
-DEBUG: merging values at node 0x600001d260d8
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [0,2]
+--> new value  =0 2
+DEBUG: merging values at node 0x6000028c6bc8
 --> phi[0] with lub([+inf,-inf], [1,1]) = [1,1]
 --> phi[1] with lub([1,1], [2,+inf]) = [1,+inf]
 DEBUG: analyzing   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
 --> old value = [1,10]
 --> new value  =1 2147483647
-widening1 2147483647
 DEBUG: adding to worklist :  %multmp = mul i64 %y.0, 2
-DEBUG: analyzing   %addtmp = add i64 %x.0, %y.0
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,10]) = [0,10]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [0,5]
+--> new value  =0 10
+DEBUG: adding to worklist :  %addtmp10 = add i64 %addtmp8, %z.0
+DEBUG: adding to worklist :  %addtmp = add i64 %z.0, 1
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
 --> old value = [2,+inf]
 --> new value  =1 2147483647
-widening1 2147483647
 DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
 --> old value = [0,10]
 --> new value  =-1 9
-widening-2147483648 10
 DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+DEBUG: adding to worklist :  %divtmp = sdiv i64 %subtmp, 5
 DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
 --> old value = [0,1]
 --> new value  =0 1
@@ -182,34 +320,81 @@ low is 2
 DEBUG: analyzing   %multmp = mul i64 %y.0, 2
 --> old value = [2,+inf]
 --> new value  =2 2147483647
-DEBUG: merging values at node 0x600001d26178
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [2,+inf]
+--> new value  =1 2147483647
+DEBUG: adding to worklist :  %addtmp12 = add i64 %addtmp10, %t.0
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [1,10]
+--> new value  =1 11
+DEBUG: adding to worklist :  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
 --> phi[1] with lub([10,10], [-inf,10]) = [-inf,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [0,10]
 --> new value  =-2147483648 10
-widening-2147483648 10
-DEBUG: adding to worklist :  %addtmp = add i64 %x.0, %y.0
+DEBUG: adding to worklist :  %addtmp8 = add i64 %x.0, %y.0
 DEBUG: adding to worklist :  %subtmp = sub i64 %x.0, 1
 DEBUG: adding to worklist :  %gttmp = icmp sgt i64 %x.0, 0
-DEBUG: analyzing   %addtmp = add i64 %x.0, %y.0
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [0,2]
+--> new value  =-429496730 2
+DEBUG: adding to worklist :  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+DEBUG: analyzing   %addtmp12 = add i64 %addtmp10, %t.0
+--> old value = [2,+inf]
+--> new value  =1 2147483647
+DEBUG: merging values at node 0x6000028c6b28
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [1,+inf]) = [0,+inf]
+DEBUG: analyzing   %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+--> old value = [0,10]
+--> new value  =0 2147483647
+DEBUG: adding to worklist :  %addtmp10 = add i64 %addtmp8, %z.0
+DEBUG: adding to worklist :  %addtmp = add i64 %z.0, 1
+DEBUG: analyzing   %addtmp8 = add i64 %x.0, %y.0
 --> old value = [1,+inf]
 --> new value  =-2147483648 2147483647
-widening-2147483648 2147483647
 DEBUG: analyzing   %subtmp = sub i64 %x.0, 1
 --> old value = [-inf,10]
 --> new value  =-2147483648 9
-widening-2147483648 10
 DEBUG: adding to worklist :  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
+DEBUG: adding to worklist :  %divtmp = sdiv i64 %subtmp, 5
 DEBUG: analyzing   %gttmp = icmp sgt i64 %x.0, 0
 --> old value = [0,1]
 --> new value  =0 1
-DEBUG: merging values at node 0x600001d26178
+DEBUG: merging values at node 0x6000028c6a88
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [-inf,2]) = [-inf,2]
+DEBUG: analyzing   %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+--> old value = [0,2]
+--> new value  =-2147483648 2
+DEBUG: adding to worklist :  %addtmp12 = add i64 %addtmp10, %t.0
+DEBUG: analyzing   %addtmp10 = add i64 %addtmp8, %z.0
+--> old value = [1,+inf]
+--> new value  =-2147483648 2147483647
+DEBUG: analyzing   %addtmp = add i64 %z.0, 1
+--> old value = [1,+inf]
+--> new value  =1 2147483647
+DEBUG: merging values at node 0x6000028c6c68
 --> phi[0] with lub([+inf,-inf], [10,10]) = [10,10]
 --> phi[1] with lub([10,10], [-inf,10]) = [-inf,10]
 DEBUG: analyzing   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
 --> old value = [-inf,10]
 --> new value  =-2147483648 10
+DEBUG: analyzing   %divtmp = sdiv i64 %subtmp, 5
+--> old value = [-inf,2]
+--> new value  =-429496730 2
+DEBUG: adding to worklist :  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+DEBUG: analyzing   %addtmp12 = add i64 %addtmp10, %t.0
+--> old value = [1,+inf]
+--> new value  =-2147483648 2147483647
+DEBUG: merging values at node 0x6000028c6a88
+--> phi[0] with lub([+inf,-inf], [0,0]) = [0,0]
+--> phi[1] with lub([0,0], [-inf,2]) = [-inf,2]
+DEBUG: analyzing   %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
+--> old value = [-inf,2]
+--> new value  =-2147483648 2
 *** interval range analysis for function define i64 @_tip_main() {
 entry:
   br label %header1
@@ -217,6 +402,8 @@ entry:
 header1:                                          ; preds = %body1, %entry
   %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ]
   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ]
+  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ]
+  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ]
   %gttmp = icmp sgt i64 %x.0, 0
   %loopcond = icmp ne i1 %gttmp, false
   br i1 %loopcond, label %body1, label %exit1
@@ -224,19 +411,29 @@ header1:                                          ; preds = %body1, %entry
 body1:                                            ; preds = %header1
   %subtmp = sub i64 %x.0, 1
   %multmp = mul i64 %y.0, 2
+  %addtmp = add i64 %z.0, 1
+  %divtmp = sdiv i64 %subtmp, 5
   br label %header1
 
 exit1:                                            ; preds = %header1
   call void @llvm.donothing()
-  %addtmp = add i64 %x.0, %y.0
-  ret i64 %addtmp
+  %addtmp8 = add i64 %x.0, %y.0
+  %addtmp10 = add i64 %addtmp8, %z.0
+  %addtmp12 = add i64 %addtmp10, %t.0
+  ret i64 %addtmp12
 }
  ***
-  %addtmp = add i64 %x.0, %y.0 = [-inf,+inf]
-  call void @llvm.donothing() = [-inf,+inf]
-  %gttmp = icmp sgt i64 %x.0, 0 = [0,1]
-  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ] = [-inf,10]
-  %loopcond = icmp ne i1 %gttmp, false = [0,1]
-  %subtmp = sub i64 %x.0, 1 = [-inf,10]
+  %z.0 = phi i64 [ 0, %entry ], [ %addtmp, %body1 ] = [0,+inf]
   %y.0 = phi i64 [ 1, %entry ], [ %multmp, %body1 ] = [1,+inf]
+  %divtmp = sdiv i64 %subtmp, 5 = [-inf,2]
+  %gttmp = icmp sgt i64 %x.0, 0 = [0,1]
+  %loopcond = icmp ne i1 %gttmp, false = [0,1]
+  %addtmp8 = add i64 %x.0, %y.0 = [-inf,+inf]
+  %t.0 = phi i64 [ 0, %entry ], [ %divtmp, %body1 ] = [-inf,2]
+  %subtmp = sub i64 %x.0, 1 = [-inf,10]
+  %addtmp10 = add i64 %addtmp8, %z.0 = [-inf,+inf]
   %multmp = mul i64 %y.0, 2 = [2,+inf]
+  %addtmp12 = add i64 %addtmp10, %t.0 = [-inf,+inf]
+  %x.0 = phi i64 [ 10, %entry ], [ %subtmp, %body1 ] = [-inf,10]
+  %addtmp = add i64 %z.0, 1 = [1,+inf]
+  call void @llvm.donothing() = [-inf,+inf]

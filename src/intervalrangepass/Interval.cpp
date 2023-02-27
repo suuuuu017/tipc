@@ -128,7 +128,7 @@ int overflowHandler(double x, double y){
         return pinf;
     }
     else{
-        return (int)r;
+        return round(r);
     }
 }
 
@@ -188,8 +188,6 @@ Interval interval::div(Interval l, Interval r) {
     int y2 = upper(r);
 
     if(y1 < 0 && y2 > 0){
-        //TODO: what to do with two intervals
-        //TODO: hint in clion is not working
         return multiHelper(l, std::make_pair(minf, pinf));
     }
     else if(y1 == 0){

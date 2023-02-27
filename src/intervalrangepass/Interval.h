@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <set>
+#include <cmath>
 
 /* Integer intervals 
  *   A simple interface using basic types that is optimized for clarity

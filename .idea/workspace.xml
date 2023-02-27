@@ -11,6 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c02d0f9c-b7a6-48a8-97cf-ea75fc5ff686" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/1.txt" beforeDir="false" afterPath="$PROJECT_DIR$/1.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/intervalrangepass/Interval.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/Interval.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/intervalrangepass/Interval.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/Interval.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/intervalrangepass/IntervalRangeAnalysis.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/intervalrangepass/IntervalRangeAnalysis.cpp" afterDir="false" />
@@ -53,7 +54,7 @@
       <updated>1677088370702</updated>
       <workItem from="1677088379413" duration="4537000" />
       <workItem from="1677101786131" duration="213000" />
-      <workItem from="1677102036560" duration="25825000" />
+      <workItem from="1677102036560" duration="30175000" />
     </task>
     <servers />
   </component>
@@ -61,14 +62,22 @@
     <option name="version" value="2" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="442" y="251" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1677275250391">
+    <state x="442" y="251" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1677516744979">
       <screen x="0" y="25" width="1440" height="875" />
     </state>
-    <state x="442" y="251" key="#com.intellij.fileTypes.FileTypeChooser/0.25.1440.875@0.25.1440.875" timestamp="1677275250391" />
+    <state x="442" y="251" key="#com.intellij.fileTypes.FileTypeChooser/0.25.1440.875@0.25.1440.875" timestamp="1677516744979" />
     <state x="176" y="80" key="SettingsEditor" timestamp="1677101993475">
       <screen x="0" y="25" width="1440" height="875" />
     </state>
     <state x="176" y="80" key="SettingsEditor/0.25.1440.875@0.25.1440.875" timestamp="1677101993475" />
+    <state x="929" y="185" width="994" height="614" key="dock-window-1" timestamp="1677516687504">
+      <screen x="0" y="25" width="1440" height="875" />
+    </state>
+    <state x="929" y="185" width="994" height="614" key="dock-window-1/0.25.1440.875@0.25.1440.875" timestamp="1677516687504" />
+    <state x="858" y="128" width="994" height="614" key="dock-window-2" timestamp="1677516687505">
+      <screen x="0" y="25" width="1440" height="875" />
+    </state>
+    <state x="858" y="128" width="994" height="614" key="dock-window-2/0.25.1440.875@0.25.1440.875" timestamp="1677516687505" />
     <state x="352" y="205" width="595" height="474" key="find.popup" timestamp="1677277042610">
       <screen x="0" y="25" width="1440" height="875" />
     </state>
@@ -77,5 +86,16 @@
       <screen x="0" y="25" width="1440" height="875" />
     </state>
     <state x="314" y="212" width="670" height="676" key="search.everywhere.popup/0.25.1440.875@0.25.1440.875" timestamp="1677284391722" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
+          <url>file://$PROJECT_DIR$/src/intervalrangepass/Interval.cpp</url>
+          <line>162</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

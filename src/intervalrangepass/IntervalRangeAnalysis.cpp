@@ -196,14 +196,15 @@ IntervalRangeAnalysis::runOnFunction(Function& F) {
 
     // add users of this instruction to worklist only if the value has changed
     if (old != current) {
+        // TODO: check minf
         auto nl = B.lower_bound(current.first);
 //        if (nl != B.begin()){
-        if(int(*nl) != int(current.first)){
-            current.first = *(--nl);
-        }
-        else{
-            current.first = *nl;
-        }
+            if(int(*nl) != int(current.first)){
+                current.first = *(--nl);
+            }
+            else{
+                current.first = *nl;
+            }
 //        }
 //        else{
 //            current.first = minf;
@@ -212,7 +213,7 @@ IntervalRangeAnalysis::runOnFunction(Function& F) {
         current.second = *nr;
 
 
-        errs() << "widening" << current.first << " " << current.second << "\n";
+//        errs() << "widening" << current.first << " " << current.second << "\n";
       state[i] = current;
       for(User *u : i->users()) { 
         if (Instruction* cu = dyn_cast<Instruction>(u)){
