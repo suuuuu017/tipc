@@ -205,10 +205,52 @@ Interval interval::div(Interval l, Interval r) {
  *   Trivial imprecise definitions
  */
 //TODO: comparsion for extra credit
-Interval interval::lt(Interval l, Interval r) { return unit(); }
-Interval interval::gt(Interval l, Interval r) { return unit(); }
-Interval interval::eq(Interval l, Interval r) { return unit(); }
-Interval interval::ne(Interval l, Interval r) { return unit(); }
+Interval interval::lt(Interval l, Interval r) {
+    if(lower(l) == pinf && upper(l) == minf ||
+            lower(r) == pinf && upper(r) == minf){
+        return unit();
+    }
+    else if(upper(l) < lower(r)){
+        return make(1, 1);
+    }
+    else if(lower(l) > upper(r)){
+        return make(0, 0);
+    }
+    return unit();
+}
+Interval interval::gt(Interval l, Interval r) {
+    return interval::lt(r, l);
+}
+Interval interval::eq(Interval l, Interval r) {
+    if(lower(l) == minf || upper(l) == minf ||
+        lower(l) == pinf || upper(l) == pinf ||
+        lower(r) == minf || upper(r) == minf ||
+        lower(r) == pinf || upper(r) == pinf){
+        return unit();
+    }
+    else if(lower(l) == lower(r) && upper(l) == upper(r) && lower(l) == upper(l)){
+        return make(1, 1);
+    }
+    else if(upper(l) < lower(r) || upper(r) < lower(l)){
+        return make(0, 0);
+    }
+    return unit();
+}
+Interval interval::ne(Interval l, Interval r) {
+    if(lower(l) == minf || upper(l) == minf ||
+       lower(l) == pinf || upper(l) == pinf ||
+       lower(r) == minf || upper(r) == minf ||
+       lower(r) == pinf || upper(r) == pinf){
+        return unit();
+    }
+    else if(lower(l) == lower(r) && upper(l) == upper(r) && lower(l) == upper(l)){
+        return make(0, 0);
+    }
+    else if(upper(l) < lower(r) || upper(r) < lower(l)){
+        return make(1, 1);
+    }
+    return unit();
+}
 
 std::string istr(int b) {
   std::string result = "";
